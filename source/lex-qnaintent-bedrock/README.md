@@ -29,7 +29,7 @@ This solution provides the steps to create the necessary resources via CloudForm
 
 ### Cost
 
-You are responsible for the cost of the AWS services used while running this Guidance. As of May 2024, the cost for running this Guidance with the default settings in the <us-east-1 AWS Region> is approximately $<n.nn> per month for processing ( <nnnnn> records )
+You are responsible for the cost of the AWS services used while running this Guidance. As of May 2024, the cost for running this Guidance with the default settings in the <us-east-1 AWS Region> is approximately $182.28 per month.
 
 _We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance._
 
@@ -39,11 +39,13 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 | AWS service  | Dimensions | Cost [USD] |
 | ----------- | ------------ | ------------ |
-| AWS CloudFormation | 1,000,000 REST API calls per month  | $ 3.50month |
-| Amazon Lex | 1,000 active users per month without advanced security feature | $ 0.00 |
-| Amazon S3 | 1,000 active users per month without advanced security feature | $ 0.00 |
-| Amazon Bedrock | 1,000 active users per month without advanced security feature | $ 0.00 |
-| Amazon OpenSearch | 1,000 active users per month without advanced security feature | $ 0.00 |
+| AWS CloudFormation | No additional charge for resources in the AWS::* namespace  | $ 0.00 |
+| Amazon Lex | 1,000 text requests per month x 0.00075 USD | $ 0.75 |
+| Amazon S3 | 1 GB object storage x 0.023 USD | $ 0.02 |
+| Amazon Bedrock | 1,000 Invoke Model Requests - Claude V2 (500 input tokens, 100 output tokens) | $ 6.30 |
+| Amazon OpenSearch | 2 OCUs Indexing - 2 OCUs Search and Query | $ 175.21 |
+
+*OpenSearch Serverless minimum configurations is 2 OCUs for Indexing and 2 OCUs for Search and Query.  OpenSearch Serverless can scale down to 0.5 OCUs.  The estimate above is assuming fractional OCUs.  If using the full minimum configuration settings of 2 OCUs for Indexing and 2 OCUs for Search and Query, the cost would be $700.82 per month.*
 
 ## Prerequisites 
 
