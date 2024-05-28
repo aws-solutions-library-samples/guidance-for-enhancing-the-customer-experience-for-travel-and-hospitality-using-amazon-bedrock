@@ -65,7 +65,7 @@ Ensure you have enabled access to the Amazon Bedrock Models you wish to use in t
 ## Deployment Steps 
 
 1. Clone the repo using command ```git clone https://github.com/aws-solutions-library-samples/guidance-for-enhancing-the-customer-experience-for-travel-and-hospitality-using-amazon-bedrock.git```
-2. cd to the repo folder ```cd guidance-for-enhancing-the-customer-experience-for-travel-and-hospitality-using-amazon-bedrock/source/lex-qnaintent-bedrock/deployment```
+2. cd to the repo folder ```cd guidance-for-enhancing-the-customer-experience-for-travel-and-hospitality-using-amazon-bedrock/guidance/lex-qnaintent-bedrock/deployment```
 3. Your AWS CloudFormation template will be available in this directory.  
 4. Navigate to AWS CloudFormation in the AWS Console.
 5. Select Create stack - With new resources (standard).
