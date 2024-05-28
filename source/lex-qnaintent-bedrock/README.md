@@ -105,9 +105,7 @@ It will take a few minutes for your stack to deploy.  Once you receive a ```CREA
 
 ## Revisions
 
-Document all notable changes to this project.
-
-Consider formatting this section based on Keep a Changelog, and adhering to Semantic Versioning.
+May 28, 2024 - Initial Commit
 
 ## Notices
 
