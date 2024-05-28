@@ -29,18 +29,21 @@ This solution provides the steps to create the necessary resources via CloudForm
 
 ### Cost
 
-_You are responsible for the cost of the AWS services used while running this Guidance. As of May 2024, the cost for running this Guidance with the default settings in the <us-east-1 AWS Region> is approximately $<n.nn> per month for processing ( <nnnnn> records )
+You are responsible for the cost of the AWS services used while running this Guidance. As of May 2024, the cost for running this Guidance with the default settings in the <us-east-1 AWS Region> is approximately $<n.nn> per month for processing ( <nnnnn> records )
 
 _We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance._
 
 ### Sample Cost Table
 
-The following table provides a sample cost breakdown for deploying this Guidance with the default parameters in the US East (N. Virginia) Region for one month.
+The following table provides a sample cost breakdown for deploying this Guidance with the default parameters in the US East (N. Virginia) Region for one month.  To prevent total charges 
 
 | AWS service  | Dimensions | Cost [USD] |
 | ----------- | ------------ | ------------ |
-| Amazon API Gateway | 1,000,000 REST API calls per month  | $ 3.50month |
-| Amazon Cognito | 1,000 active users per month without advanced security feature | $ 0.00 |
+| AWS CloudFormation | 1,000,000 REST API calls per month  | $ 3.50month |
+| Amazon Lex | 1,000 active users per month without advanced security feature | $ 0.00 |
+| Amazon S3 | 1,000 active users per month without advanced security feature | $ 0.00 |
+| Amazon Bedrock | 1,000 active users per month without advanced security feature | $ 0.00 |
+| Amazon OpenSearch | 1,000 active users per month without advanced security feature | $ 0.00 |
 
 ## Prerequisites 
 
@@ -53,7 +56,7 @@ Ensure you have enabled access to the Amazon Bedrock Models you wish to use in t
 **Resources**
 - AWS CloudFormation
 - Amazon Lex
-- S3 bucket
+- Amazon S3 bucket
 - Amazon Bedrock Knowledge Bases
 - Amazon OpenSearch Serverless Collection
 
@@ -75,25 +78,30 @@ Ensure you have enabled access to the Amazon Bedrock Models you wish to use in t
 
 ## Deployment Validation
 
-It will take a few minutes for your stack to deploy.  Once you receive a CREATE_COMPLETE status message, navigate to Amazon Lex in the AWS Console to test your Lex bot with QnAIntent.
+It will take a few minutes for your stack to deploy.  Once you receive a ```CREATE_COMPLETE``` status message, navigate to Amazon Lex in the AWS Console to test your Lex bot with QnAIntent.
 
 
 ## Running the Guidance 
 
-<Provide instructions to run the Guidance with the sample data or input provided, and interpret the output received.> 
-
-This section should include:
-
-* Guidance inputs
-* Commands to run
-* Expected output (provide screenshot if possible)
-* Output description
+1. After navigating to Amazon Lex in the AWS Console, click the bot deployed by the solution. 
+2. Next, navigate to English (US) in the left side menu under All languages.  
+3. You should now see an option to **Build** or **Test** your bot in the upper right corner of the console.  Click **Build**.
+4. After the build is complete, you can now test your bot.  Click **Test** and a test window should appear in the right side of the screen. 
+5. Interact with your bot by asking questions about your knowledge repository.
 
 
 ## Cleanup 
 
-- Include detailed instructions, commands, and console actions to delete the deployed Guidance.
-- If the Guidance requires manual deletion of resources, such as the content of an S3 bucket, please specify.
+1. Delete your CloudFormation stack by navigating to AWS CloudFormation in the AWS Console.  
+2. Select the stack you deployed previously.
+3. Click Delete in the upper right corner, then click Delete in the pop up modal window.
+4. Next, navigate to Amazon Bedrock in the AWS Console to delete your Bedrock Knowledge Base.
+5. Navigate to Bedrock Knowledge Bases.
+6. Click the radio button next to the Bedrock Knowledge Base you created earlier, and click Delete.  
+7. In the modal window, check **Delete underlying vector data**, then type Delete in the textbox.  Then click Delete.
+8. After your Bedrock Knowledge Base and vector data is deleted, navigate to Amazon S3 in the AWS Console.
+9. Select the radio button next to the S3 Bucket used for your knowledge base repository, and click the **Empty** button if you no longer need this data.
+10. After the bucket data is removed, you can now select **Delete** to delete your bucket.
 
 ## Revisions
 
@@ -108,5 +116,5 @@ Consider formatting this section based on Keep a Changelog, and adhering to Sema
 
 ## Authors
 
-Josh Rodgers
-Atik Khatri
+- Josh Rodgers
+- Atik Khatri
