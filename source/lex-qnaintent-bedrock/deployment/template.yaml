@@ -1,0 +1,422 @@
+# The BookTrip bot consists of the following:
+# 1. IAM role that is used by the bot at runtime
+# 2. Inline Bot
+# 3. Lambda backed custom resource
+# 4. Bot Version
+# 5. Alias
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template deploys Lambda function, custom resource, and Lex bot.'
+Parameters: 
+  kbarn: 
+    Description: Provide your Bedrock Knolwedge Base ID
+    Type: String
+    Default: Example - 0XQXZG1234
+  modelarn: 
+    Description: Provide a Bedrock Model ID
+    Type: String
+    Default: Example - anthropic.claude-v2
+
+Resources:
+  # 1. IAM Role used by the Lex service to make runtime calls
+  BotRuntimeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lexv2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: LexRuntimeRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "polly:SynthesizeSpeech"
+                  - "comprehend:DetectSentiment"
+                Resource: "*"
+ 
+  # 2. Inline bot definition which depends on the IAM role
+  # The bot definition consists of combining all the child resources into one CFN resource.
+  # This includes Locales, Intents, Slots, and SlotTypes.
+  BookTripTemplateBot:
+    DependsOn: BotRuntimeRole
+    Type: AWS::Lex::Bot
+    Properties:
+      Name: "BookTripWithCFN"
+      RoleArn: !GetAtt BotRuntimeRole.Arn
+      DataPrivacy:
+        ChildDirected: false
+      IdleSessionTTLInSeconds: 300
+      Description: "How to create a BookTrip bot with CFN"
+      # Provide a setting that allows you to either auto build the locales provided.
+      # Locale builds are also kicked off if you attempt to create a bot version 
+      # that depends on an unbuilt locale.
+      AutoBuildBotLocales: false
+      BotLocales:
+        - LocaleId: "en_US"
+          Description: "Book a trip bot Locale"
+          NluConfidenceThreshold: 0.40
+          VoiceSettings:
+            VoiceId: "Ivy"
+          SlotTypes:
+            - Name: "CarTypeValues"
+              Description: "Slot Type description"
+              SlotTypeValues:
+                - SampleValue:
+                    Value: economy
+                - SampleValue:
+                    Value: standard
+                - SampleValue:
+                    Value: midsize
+                - SampleValue:
+                    Value: full size
+                - SampleValue:
+                    Value: luxury
+                - SampleValue:
+                    Value: minivan
+              ValueSelectionSetting:
+                ResolutionStrategy: ORIGINAL_VALUE
+            - Name: "RoomTypeValues"
+              Description: "Slot Type description"
+              SlotTypeValues:
+                - SampleValue:
+                    Value: queen
+                - SampleValue:
+                    Value: king
+                - SampleValue:
+                    Value: deluxe
+              ValueSelectionSetting:
+                ResolutionStrategy: ORIGINAL_VALUE
+          Intents:
+            - Name: "BookCar"
+              Description: "Intent to book a car on StayBooker"
+              SampleUtterances:
+                - Utterance: "Book a car"
+                - Utterance: "Reserve a car"
+                - Utterance: "Make a car reservation"
+              SlotPriorities:
+                - Priority: 4
+                  SlotName: DriverAge
+                - Priority: 1
+                  SlotName: PickUpCity
+                - Priority: 3
+                  SlotName: ReturnDate
+                - Priority: 5
+                  SlotName: CarType
+                - Priority: 2
+                  SlotName: PickUpDate 
+              IntentConfirmationSetting:
+                PromptSpecification:
+                  MessageGroupsList:
+                    - Message:
+                        PlainTextMessage:
+                          Value: "Okay, I have you down for a {CarType} rental in {PickUpCity} from {PickUpDate} to {ReturnDate}.  Should I book the reservation?"
+                  MaxRetries: 3
+                  AllowInterrupt: false
+                DeclinationResponse:
+                  MessageGroupsList:
+                    - Message:
+                        PlainTextMessage:
+                          Value: "Okay, I have cancelled your reservation in progress."
+                  AllowInterrupt: false
+              Slots:
+                - Name: "PickUpCity"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.City"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "In what city do you need to rent a car?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "PickUpDate"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.Date"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What day do you want to start your rental?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "ReturnDate"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.Date"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What day do you want to return the car?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "DriverAge"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.Number"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "How old is the driver for this rental?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "CarType"
+                  Description: "something"
+                  SlotTypeName: "CarTypeValues"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What type of car would you like to rent?  Our most popular options are economy, midsize, and luxury"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+            # We expect developers to provide the FallbackIntent when generating their bot.
+            # The service will throw an exception if it isn't provided.
+            - Name: "BookHotel"
+              Description: "Intent to book a hotel on StayBooker"
+              SampleUtterances:
+                - Utterance: "Book a hotel"
+                - Utterance: "I want a make hotel reservations"
+                - Utterance: "Book a {Nights} night stay in {Location}"
+              IntentConfirmationSetting:
+                PromptSpecification:
+                  MessageGroupsList:
+                    - Message:
+                        PlainTextMessage:
+                          Value: "Okay, I have you down for a {Nights} night stay in {Location} starting {CheckInDate}.  Shall I book the reservation?"
+                  MaxRetries: 3
+                  AllowInterrupt: false
+                DeclinationResponse:
+                  MessageGroupsList:
+                    - Message:
+                        PlainTextMessage:
+                          Value: "Okay, I have cancelled your reservation in progress."
+                  AllowInterrupt: true
+              SlotPriorities:
+                - Priority: 4
+                  SlotName: RoomType
+                - Priority: 1
+                  SlotName: Location
+                - Priority: 3
+                  SlotName: Nights
+                - Priority: 2
+                  SlotName: CheckInDate 
+              Slots:
+                - Name: "Location"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.City"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What city will you be staying in?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "CheckInDate"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.Date"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What day do you want to check in?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "Nights"
+                  Description: "something"
+                  SlotTypeName: "AMAZON.Number"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "How many nights will you be staying?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "RoomType"
+                  Description: "something"
+                  SlotTypeName: "RoomTypeValues"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "What type of room would you like, queen, king or deluxe?"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+            - Name: "FallbackIntent"
+              Description: "Default intent when no other intent matches"
+              ParentIntentSignature: "AMAZON.FallbackIntent"
+ 
+  # 3. Define a bot version which depends on the DRAFT version of the Lex Bot
+  BookTripBotVersionWithCFN:
+    DependsOn: CreateIntent
+    Type: AWS::Lex::BotVersion
+    Properties:
+      BotId: !Ref BookTripTemplateBot
+      BotVersionLocaleSpecification:
+        - LocaleId: en_US
+          BotVersionLocaleDetails:
+            SourceBotVersion: DRAFT
+      Description: BookTrip Version
+ 
+  # 4. We define the alias by providing the bot version created by the AWS::Lex::BotVersion resource above
+  FirstBotAliasWithCFN:
+    DependsOn: BookTripBotVersionWithCFN
+    Type: AWS::Lex::BotAlias
+    Properties:
+      BotId: !Ref BookTripTemplateBot
+      BotAliasName: "BookTripVersion1Alias"
+      # Remove BotAliasLocaleSettings if you aren't concerned with Lambda setup.
+      # If you are you can modify the LambdaArn below to get started.
+      # BotAliasLocaleSettings:
+      #   - LocaleId: en_US
+      #     BotAliasLocaleSetting:
+      #       Enabled: false
+      #       CodeHookSpecification: 
+      #         LambdaCodeHook:
+      #           CodeHookInterfaceVersion: "1.0"
+      #           LambdaArn: "arn:aws:lambda:us-east-1:111111111111:function:ReplaceWithYourOwnLambda"
+      BotVersion: !GetAtt BookTripBotVersionWithCFN.BotVersion
+      SentimentAnalysisSettings:
+        DetectSentiment: true
+
+# Use Custom Resource to Create QnAIntent
+# Remove section after native CloudFormation support for QnAIntent is added
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: An execution role for a Lambda function launched by CloudFormation
+      ManagedPolicyArns:
+        - !Ref LambdaPolicy
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+          - 'sts:AssumeRole'
+  LambdaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Managed policy for a Lambda function launched by CloudFormation
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lex:CreateIntent'
+            Resource: !Sub 'arn:${AWS::Partition}:lex:${AWS::Region}:${AWS::AccountId}:bot/*'
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Join ['',['arn:', !Ref AWS::Partition, ':logs:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':log-group:/aws/lambda/', !Ref AWS::StackName, ':*']]
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+            Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:*'
+
+  # QnAIntent not currently supported via CloudFormation - provisioning via custom resource until QnAIntent is natively supported
+  CreateIntent:
+    Type: Custom::CreateIntent
+    DependsOn: BookTripTemplateBot
+    Properties:
+      ServiceToken: !GetAtt LambdaCreateIntent.Arn
+      kbarn: !Join ['',['arn:', !Ref AWS::Partition, ':bedrock:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':knowledge-base/', !Ref kbarn ]]
+      modelarn: !Join ['',['arn:', !Ref AWS::Partition, ':bedrock:', !Ref AWS::Region, '::','foundation-model/', !Ref modelarn ]]
+      version: DRAFT
+      locale: en_US
+      botId: !Ref BookTripTemplateBot
+
+  LambdaCreateIntent:
+    Type: AWS::Lambda::Function
+    DependsOn: BookTripTemplateBot
+    Properties:
+      Description: Creates a QnAIntent for a Lex bot
+      Handler: index.lambda_handler
+      FunctionName: !Ref AWS::StackName
+      MemorySize: 128
+      Runtime: python3.12
+      Role: !GetAtt 'LambdaRole.Arn'
+      Timeout: 240
+      Code:
+        ZipFile: |
+            import json
+            import sys
+            from pip._internal import main
+
+            # Temporary - pull in updates for latest Boto3 with support for QnAIntent
+
+            main(['install', '-I', '-q', 'boto3', '--target', '/tmp/', '--no-cache-dir', '--disable-pip-version-check'])
+            sys.path.insert(0,'/tmp/')
+
+            import boto3
+            from botocore.exceptions import ClientError
+
+            import cfnresponse
+
+            client = boto3.client('lexv2-models')
+
+            def lambda_handler(event, context):
+                
+                try:
+                    
+                    if event['RequestType'] == 'Delete':
+                        cfnresponse.send(event, context, cfnresponse.SUCCESS, "")
+
+                    kbarn = event["ResourceProperties"]["kbarn"]
+                    modelarn = event["ResourceProperties"]["modelarn"]
+                    botId = event["ResourceProperties"]["botId"]
+                    locale = event["ResourceProperties"]["locale"]
+                    version = event["ResourceProperties"]["version"]
+                
+                    response = client.create_intent(
+                    intentName="QnAIntent",
+                    parentIntentSignature="AMAZON.QnAIntent",
+                    botId=botId,
+                    botVersion=version,
+                    localeId=locale,
+                    qnAIntentConfiguration={
+                        'dataSourceConfiguration': { 
+                            'bedrockKnowledgeStoreConfiguration': { 
+                                'bedrockKnowledgeBaseArn': kbarn,
+                            },
+                        },
+                        'bedrockModelConfiguration': {
+                            'modelArn': modelarn
+                            }
+                        }
+                    )
+                    responseData = {}
+                    responseData['intentId'] = response["intentId"]
+                    cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourceIntentId")
+                except Exception as e:
+                    print(e)
+                    cfnresponse.send(event, context, cfnresponse.FAILED, "")
+
+
