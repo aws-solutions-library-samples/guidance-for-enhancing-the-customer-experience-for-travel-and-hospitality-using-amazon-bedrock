@@ -5,7 +5,7 @@
 # 4. Bot Version
 # 5. Alias
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'AWS CloudFormation template deploys Lambda function, custom resource, and Lex bot.'
+Description: 'AWS CloudFormation template deploys Lambda function, custom resource, and Lex bot. (SO9344)'
 Parameters: 
   kbarn: 
     Description: Provide your Bedrock Knolwedge Base ID
