@@ -362,6 +362,8 @@ Resources:
       FunctionName: !Ref AWS::StackName
       MemorySize: 128
       Runtime: python3.12
+      TracingConfig: 
+        Mode: Active
       Role: !GetAtt 'LambdaRole.Arn'
       Timeout: 240
       Code:
