@@ -389,7 +389,7 @@ Resources:
                 try:
                     
                     if event['RequestType'] == 'Delete':
-                        cfnresponse.send(event, context, cfnresponse.SUCCESS, "")
+                        cfnresponse.send(event, context, cfnresponse.SUCCESS)
 
                     kbarn = event["ResourceProperties"]["kbarn"]
                     modelarn = event["ResourceProperties"]["modelarn"]
@@ -419,6 +419,6 @@ Resources:
                     cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourceIntentId")
                 except Exception as e:
                     print(e)
-                    cfnresponse.send(event, context, cfnresponse.FAILED, "")
+                    cfnresponse.send(event, context, cfnresponse.FAILED)
 
 
