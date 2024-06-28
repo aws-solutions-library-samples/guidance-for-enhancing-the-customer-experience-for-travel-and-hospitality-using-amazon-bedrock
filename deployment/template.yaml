@@ -346,6 +346,7 @@ Resources:
     Type: Custom::CreateIntent
     DependsOn: BookTripTemplateBot
     Properties:
+      ServiceTimeout: 180
       ServiceToken: !GetAtt LambdaCreateIntent.Arn
       kbarn: !Join ['',['arn:', !Ref AWS::Partition, ':bedrock:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':knowledge-base/', !Ref kbarn ]]
       modelarn: !Join ['',['arn:', !Ref AWS::Partition, ':bedrock:', !Ref AWS::Region, '::','foundation-model/', !Ref modelarn ]]
@@ -389,7 +390,8 @@ Resources:
                 try:
                     
                     if event['RequestType'] == 'Delete':
-                        cfnresponse.send(event, context, cfnresponse.SUCCESS)
+                        responseData = {'Message': 'DeleteCustomResource'}
+                        cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourcePhysicalID")
 
                     kbarn = event["ResourceProperties"]["kbarn"]
                     modelarn = event["ResourceProperties"]["modelarn"]
@@ -419,6 +421,7 @@ Resources:
                     cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourceIntentId")
                 except Exception as e:
                     print(e)
-                    cfnresponse.send(event, context, cfnresponse.FAILED)
+                    responseData = {'Message': e}
+                    cfnresponse.send(event, context, cfnresponse.FAILED, responseData, "CustomResourceIntentId")
 
 
