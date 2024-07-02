@@ -41,6 +41,24 @@ Resources:
                   - "polly:SynthesizeSpeech"
                   - "comprehend:DetectSentiment"
                 Resource: "*"
+        - PolicyName: LexRuntimeBedrockKBPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "bedrock:InvokeModel"
+                Resource:
+                  - !Join ["", ["arn:aws:bedrock:", !Ref "AWS::Region" , "::foundation-model/", !Ref modelarn ]]
+        - PolicyName: LexRuntimeBedrockInvokePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "bedrock:Retrieve"
+                Resource: 
+                  - !Join ["", ["arn:aws:bedrock:*:", !Ref "AWS::AccountId",":knowledge-base/", !Ref kbarn]]
  
   # 2. Inline bot definition which depends on the IAM role
   # The bot definition consists of combining all the child resources into one CFN resource.
