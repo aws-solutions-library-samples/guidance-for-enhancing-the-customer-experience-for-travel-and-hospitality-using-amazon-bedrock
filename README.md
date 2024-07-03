@@ -112,7 +112,7 @@ Amazon Cognito is an identity platform for web and mobile apps. It’s a user di
 
 Amazon Lex QnAIntent can be integrated with Amazon Bedrock Knowledge Bases, as demonstrated in this solution guidance.  It can also be integrated with Amazon Kendra or Amazon OpenSearch.  [More information on integrating with these additional knowledge store options can be found here.](https://docs.aws.amazon.com/lexv2/latest/dg/built-in-intent-qna.html)
 
-Amazon Connect is an omnichannel cloud contact center. You can set up a contact center in a few steps, add agents located anywhere, and start engaging with your customers.  [To integrate an Amazon Lex chatbot with Amazon Connect, please see the steps here.](Amazon Connect is an omnichannel cloud contact center. You can set up a contact center in a few steps, add agents located anywhere, and start engaging with your customers.)
+Amazon Connect is an omnichannel cloud contact center. You can set up a contact center in a few steps, add agents located anywhere, and start engaging with your customers.  [To integrate an Amazon Lex chatbot with Amazon Connect, please see the steps here.](https://docs.aws.amazon.com/connect/latest/adminguide/amazon-lex.html)
 
 ## Revisions
 
