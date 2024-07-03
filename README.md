@@ -4,18 +4,17 @@ This solution will explore how to integrate Amazon Lex chat bots with Amazon Bed
 
 ## Table of Content 
 
-1. [Overview](#Overview)
-    - [Cost](#Cost)
-2. [Prerequisites](#Prerequisites)
-3. [Deployment Steps](#deployment-steps-required)
-4. [Deployment Validation](#deployment-validation-required)
-5. [Running the Guidance](#running-the-guidance-required)
-6. [Next Steps](#next-steps-required)
-7. [Cleanup](#cleanup-required)
-8. [FAQ, known issues, additional considerations, and limitations](#faq-known-issues-additional-considerations-and-limitations-optional)
-9. [Revisions](#revisions-optional)
-10. [Notices](#notices-optional)
-11. [Authors](#authors-optional)
+1. [Overview](#overview)
+    - [Cost](#cost)
+2. [Prerequisites](#prerequisites)
+3. [Deployment Steps](#deployment-steps)
+4. [Deployment Validation](#deployment-validation)
+5. [Running the Guidance](#running-the-guidance)
+6. [Cleanup](#cleanup)
+7. [Additional Considerations](#additional-considerations)
+8. [Revisions](#revisions)
+9. [Notices](#notices)
+10. [Authors](#authors)
 
 ## Overview
 
@@ -104,6 +103,14 @@ It will take a few minutes for your stack to deploy.  Once you receive a ```CREA
 8. After your Bedrock Knowledge Base and vector data is deleted, navigate to Amazon S3 in the AWS Console.
 9. Select the radio button next to the S3 Bucket used for your knowledge base repository, and click the **Empty** button if you no longer need this data.
 10. After the bucket data is removed, you can now select **Delete** to delete your bucket.
+
+## Additional Considerations
+
+Amazon Cognito is an identity platform for web and mobile apps. It’s a user directory, an authentication server, and an authorization service for OAuth 2.0 access tokens and AWS credentials. With Amazon Cognito, you can authenticate and authorize users from the built-in user directory, from your enterprise directory, and from consumer identity providers like Google and Facebook.
+
+[More information on how to integrate Amazon Cognito with this solution can be found here.](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-integrate-apps.html)
+
+Amazon Lex QnAIntent can be integrated with Amazon Bedrock Knowledge Bases, as demonstrated in this solution guidance.  It can also be integrated with Amazon Kendra or Amazon OpenSearch.  [More information on integrating with these additional knowledge store options can be found here.](https://docs.aws.amazon.com/lexv2/latest/dg/built-in-intent-qna.html)
 
 ## Revisions
 
