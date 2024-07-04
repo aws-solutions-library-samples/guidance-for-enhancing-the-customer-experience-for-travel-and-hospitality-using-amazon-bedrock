@@ -1,4 +1,4 @@
-# Using Lex QnAIntent to support natural language conversations
+# Guidance for Enhancing the Customer Experience in Travel & Hospitality Using Amazon Bedrock
 
 This solution will explore how to integrate Amazon Lex chat bots with Amazon Bedrock Knowledge Bases through the Lex QnAIntent feature, allowing natural language conversations with your knowledge repositories.
 
