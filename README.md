@@ -1,6 +1,6 @@
 # Guidance for Enhancing the Customer Experience in Travel & Hospitality Using Amazon Bedrock
 
-This solution will explore how to integrate Amazon Lex chat bots with Amazon Bedrock Knowledge Bases through the Lex QnAIntent feature, allowing natural language conversations with your knowledge repositories.
+This Guidance will explore how to integrate Amazon Lex chat bots with Amazon Bedrock Knowledge Bases through the Lex QnAIntent feature, allowing natural language conversations with your knowledge repositories.
 
 ## Table of Content 
 
@@ -20,7 +20,7 @@ This solution will explore how to integrate Amazon Lex chat bots with Amazon Bed
 
 1. Amazon Bedrock Knowledge Bases allow customers to create embeddings of their knowledge repositories in Amazon S3 using OpenSearch Serverless and Amazon Bedrock, store those embeddings in a vector database, and interact with that knowledge repositories via Amazon Bedrock Knowledge Bases and Amazon Lex.
 
-This solution provides the steps to create the necessary resources via CloudFormation custom resources until native support for Lex QnAIntent in CloudFormation is available.  The solution and CloudFormation template will be updated at that time.  
+This Guidance provides the steps to create the necessary resources via CloudFormation custom resources until native support for Lex QnAIntent in CloudFormation is available.  The Guidance and CloudFormation template will be updated at that time.  
 
 ### Architecture Diagram
 ![Diagram](./assets/lexqna.png)
